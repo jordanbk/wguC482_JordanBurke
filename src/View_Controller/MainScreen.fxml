@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.MainScreenController">
+   <children>
+      <Label id="MainTitleLabel" layoutX="24.0" layoutY="30.0" prefHeight="31.0" prefWidth="294.0" text="Inventory Management System">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <Button fx:id="MainExitButton" layoutX="919.0" layoutY="450.0" mnemonicParsing="false" onAction="#MainExitClick" prefHeight="29.0" prefWidth="59.0" text="Exit" />
+      <AnchorPane fx:id="mainParts" layoutY="78.0" prefHeight="366.0" prefWidth="482.0">
+         <children>
+            <Label layoutX="23.0" layoutY="44.0" text="Parts">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="MainPartsSearchField" layoutX="320.0" layoutY="44.0" promptText="Search by Name or ID" />
+            <Button fx:id="MainPartsSearchButton" layoutX="255.0" layoutY="44.0" mnemonicParsing="false" onAction="#MainSearchPart" text="Search" />
+            <Button fx:id="MainAddPartsButton" contentDisplay="TEXT_ONLY" graphicTextGap="0.0" layoutX="139.0" layoutY="317.0" mnemonicParsing="false" onAction="#MainAddPart" opacity="0.64" prefHeight="29.0" prefWidth="59.0" style="-fx-background-color: blue;" text="Add" textFill="WHITE" />
+            <Button fx:id="MainDeletePartsButton" layoutX="287.0" layoutY="317.0" lineSpacing="15.0" mnemonicParsing="false" onAction="#MainDeletePart" opacity="0.64" style="-fx-background-color: red;" text="Delete" textFill="WHITE" />
+            <Button fx:id="MainModifyPartsButton" layoutX="213.0" layoutY="317.0" mnemonicParsing="false" onAction="#MainModifyPart" opacity="0.64" style="-fx-background-color: green;" text="Modify" textFill="WHITE">
+               <effect>
+                  <Lighting diffuseConstant="1.45" specularConstant="0.0" specularExponent="10.0" surfaceScale="0.9">
+                     <bumpInput>
+                        <BoxBlur>
+                           <input>
+                              <ColorInput />
+                           </input>
+                        </BoxBlur>
+                     </bumpInput>
+                     <light>
+                        <Light.Distant color="#ffd6d6" />
+                     </light>
+                  </Lighting>
+               </effect>
+            </Button>
+            <TableView fx:id="MainPartsTableView" layoutX="23.0" layoutY="103.0" prefHeight="186.0" prefWidth="459.0" AnchorPane.leftAnchor="23.0">
+              <columns>
+                <TableColumn fx:id="partID_Col" prefWidth="84.0" text="Part ID" />
+                <TableColumn fx:id="partName_Col" prefWidth="108.0" text="Part Name" />
+                  <TableColumn fx:id="partInv_Col" minWidth="0.0" prefWidth="127.0" text="Inventory Level" />
+                  <TableColumn fx:id="partPrice_Col" minWidth="0.0" prefWidth="147.0" text="Price/Cost Per Unit" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="mainProducts" layoutX="492.0" layoutY="78.0" prefHeight="366.0" prefWidth="508.0">
+         <children>
+            <Label layoutX="22.0" layoutY="41.0" text="Products">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Button fx:id="MainDeleteProductsButton" layoutX="300.0" layoutY="314.0" lineSpacing="15.0" mnemonicParsing="false" onAction="#MainDeleteProduct" opacity="0.64" style="-fx-background-color: red;" text="Delete" textFill="WHITE" />
+            <Button fx:id="MainAddProductsButton" contentDisplay="TEXT_ONLY" graphicTextGap="0.0" layoutX="152.0" layoutY="314.0" mnemonicParsing="false" onAction="#MainAddProduct" opacity="0.64" prefHeight="29.0" prefWidth="59.0" style="-fx-background-color: blue;" text="Add" textFill="WHITE" />
+            <Button fx:id="MainModifyProductsButton" layoutX="226.0" layoutY="314.0" mnemonicParsing="false" onAction="#MainModifyProduct" opacity="0.64" style="-fx-background-color: green;" text="Modify" textFill="WHITE">
+               <effect>
+                  <Lighting diffuseConstant="1.45" specularConstant="0.0" specularExponent="10.0" surfaceScale="0.9">
+                     <bumpInput>
+                        <BoxBlur>
+                           <input>
+                              <ColorInput />
+                           </input>
+                        </BoxBlur>
+                     </bumpInput>
+                     <light>
+                        <Light.Distant color="#ffd6d6" />
+                     </light>
+                  </Lighting>
+               </effect>
+            </Button>
+            <Button fx:id="MainProductsSearchButton" layoutX="252.0" layoutY="40.0" mnemonicParsing="false" onAction="#MainSearchProduct" text="Search" />
+            <TextField fx:id="MainProductsSearchField" layoutX="319.0" layoutY="40.0" prefHeight="29.0" prefWidth="162.0" promptText="Search by Name or ID" />
+            <TableView fx:id="MainProductsTableView" layoutX="22.0" layoutY="103.0" prefHeight="186.0" prefWidth="459.0" AnchorPane.rightAnchor="27.0">
+              <columns>
+                <TableColumn fx:id="productID_Col" prefWidth="86.0" text="Product ID" />
+                <TableColumn fx:id="productName_Col" prefWidth="113.0" text="Product Name" />
+                  <TableColumn fx:id="productInv_Col" prefWidth="132.0" text="Inventory Level" />
+                  <TableColumn fx:id="productPrice_Col" prefWidth="127.0" text="Price/Cost Per Unit" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
