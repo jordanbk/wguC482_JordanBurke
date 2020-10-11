@@ -9,16 +9,16 @@ public class Product {
     private String name;
     private double price;
     private int stock;
-    private int min;
     private int max;
+    private int min;
 
-    public Product(int id, String name, double price, int stock, int min, int max) {
+    public Product(int id, String name, double price, int stock, int max, int min) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
-        this.min = min;
-        this.max = max;
+        this.min = max;
+        this.max = min;
     }
 
     public Product() {
@@ -148,20 +148,66 @@ public class Product {
      *
      * @param associatedPart
      */
-    public static void addAssociatedPart(Part associatedPart){
-        associatedParts.add(associatedPart);
+    public void addAssociatedPart(Part associatedPart){
+        this.associatedParts.add(associatedPart);
     }
 
-    public static boolean deleteAssociatedPart(int id){
-        for(Part p : associatedParts){
-            if(p.getId() == id){
-                associatedParts.remove(p);
-                return true;
+    public void deleteAssociatedPart(Part id){
+        associatedParts.remove(id);
+
+    }
+    public ObservableList<Part> getAllAssociatedParts(){
+        return associatedParts;
+    }
+
+    public Part lookupAssocParts(int partID)
+    {
+        for (Part assocParts: associatedParts) {
+            if (assocParts.getId() == partID) {
+                return assocParts;
             }
         }
-        return false;
+        return null;
     }
-    public static void getAllAssociatedParts(){
+    private static int idCount = 0;
+    private static String error;
+    public static int getIdCount() {
+        idCount++;
+        return idCount;
+    }
 
+    /**
+     *
+     * @param name
+     * @param price
+     * @param stock
+     * @param max
+     * @param min
+     * @param parts
+     * @return error
+     */
+    public static String productValidation(String name, double price, int stock,  int max, int min, int parts){
+        error = null;
+        if(stock > max || stock < min){
+            error = "Inventory must be greater than min and less than the max value.";
+        }
+        if(min > max){
+            error = "Min must be less than max value.";
+        }
+        if(max < min){
+            error = "Max must be greater than min value.";
+        }
+        if(name == null){
+            error = "Please fill in the name field";
+        }
+        if(price < 1){
+            error = "Please fill in the price field";
+        }
+        if(parts == 0){
+            error = "Products must have at least one part";
+        }
+
+        return error;
     }
+
 }

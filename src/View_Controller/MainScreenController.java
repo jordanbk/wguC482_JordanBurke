@@ -24,14 +24,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static Model.Inventory.*;
-import static javafx.fxml.FXMLLoader.load;
 
 public class MainScreenController implements Initializable {
-    @FXML
-    private Button MainAddProductsButton;
-
-    @FXML
-    private Button MainModifyProductsButton;
 
     @FXML
     private TableColumn<Product, String> productName_Col;
@@ -67,25 +61,13 @@ public class MainScreenController implements Initializable {
     private TableColumn<Part, Double> partPrice_Col;
 
     @FXML
-    private Button MainPartsSearchButton;
-
-    @FXML
     private TableColumn<Part, String> partName_Col;
 
     @FXML
     private TableColumn<Part, Integer> partInv_Col;
 
     @FXML
-    private Button MainDeletePartsButton;
-
-    @FXML
-    private Button MainDeleteProductsButton;
-
-    @FXML
     private TableColumn<Product, Integer> productInv_Col;
-
-    @FXML
-    private Button MainExitButton;
 
     @FXML
     private TextField MainProductsSearchField;
@@ -96,53 +78,27 @@ public class MainScreenController implements Initializable {
     @FXML
     private TableColumn<Product, Integer> productID_Col;
 
-    @FXML
-    private Button MainProductsSearchButton;
     private Inventory currentInventory;
     private static ObservableList<Part> newParts = FXCollections.observableArrayList();
     private static ObservableList<Product> newProducts = FXCollections.observableArrayList();
-    public void addNewParts(Part partSearched){
-        newParts.add(partSearched);
-    }
-    public ObservableList<Part> getNewParts(){
-        return newParts;
-    }
+
+
     public void addNewProducts(Product productSearched){
         newProducts.add(productSearched);
     }
     public ObservableList<Product> getNewProducts(){
         return newProducts;
     }
-    private static int modifyPartsIndex;
-    private static int modifyProductsIndex;
-    private static Part modifiedPart;
-
-    public static Part getModifiedPart() {
-        return modifiedPart;
-    }
-
-    private static Product modifiedProduct;
-
-    public static int partsToModList(){
-        return modifyPartsIndex;
-    }
-
-    public static int productsToModList(){
-        return modifyProductsIndex;
-    }
-
-    public MainScreenController() {
-    }
 
 
-      @FXML
+    //search part
+    @FXML
        private void MainSearchPart(ActionEvent event) {
           if (MainPartsSearchField.getText().isEmpty()) {
               MainPartsTableView.setItems(Inventory.getAllParts());
           }
           else {
               filteredParts.clear();
-              Inventory.filteredParts.clear();
               try {
                   newFilteredPart(Inventory.lookupPart(Integer.parseInt(MainPartsSearchField.getText())));
                   MainPartsTableView.setItems(getFilteredPart());
@@ -152,10 +108,8 @@ public class MainScreenController implements Initializable {
                   MainPartsTableView.setItems(Inventory.getFilteredPart());
               }
           }
-
-      }
-
-
+    }
+    //add part
     @FXML
     private AddPartController MainAddPart(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AddParts.fxml"));
@@ -165,11 +119,11 @@ public class MainScreenController implements Initializable {
         stageOne.setScene(scene);
         stageOne.show();
         return loader.getController();
-
     }
-
+    //delete part
     @FXML
-    private void MainDeletePart(ActionEvent event) throws IOException {
+    private void MainDeletePart(ActionEvent event) {
+
         Part part = MainPartsTableView.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initModality(Modality.NONE);
@@ -183,29 +137,63 @@ public class MainScreenController implements Initializable {
             updatePartsTableView();
             System.out.println("Part " + part.getName() + " was removed.");
         }
-        else {
-            System.out.println("Part " + part.getName() + " was not removed.");
+
+    }
+
+    //modify parts
+    private static int modifyPartsIndex;
+    private static int modifyProductsIndex;
+    public static Part modifiedPart;
+    public static Product modifiedProduct;
+    public static int partsToModList(){
+        return modifyPartsIndex;
+    }
+    public static int productsToModList(){
+        return modifyProductsIndex;
+    }
+    public static Product getModifiedProduct() {
+        return modifiedProduct;
+    }
+    public static int getModifyPartsIndex(){
+        return modifyPartsIndex;
+    }
+    @FXML
+     void MainModifyPart(ActionEvent event) throws IOException{
+        modifiedPart = MainPartsTableView.getSelectionModel().getSelectedItem();
+        if(modifiedPart != null) {
+            modifyProductsIndex = getAllProducts().indexOf(modifiedPart);
+            Parent modifyPartParent = FXMLLoader.load(getClass().getResource("ModifyParts.fxml"));
+            Scene modifyPartScene = new Scene(modifyPartParent);
+            Stage modifyPartStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            modifyPartStage.setScene(modifyPartScene);
+            modifyPartStage.show();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("A part must be selected");
+            alert.showAndWait();
+        }
+    }
+
+    //modify products
+    @FXML
+    private void MainModifyProduct(ActionEvent event) throws IOException {
+        modifiedProduct = MainProductsTableView.getSelectionModel().getSelectedItem();
+        if(modifiedProduct != null) {
+                modifyProductsIndex = getAllProducts().indexOf(modifiedProduct);
+                Parent modifyProductParent = FXMLLoader.load(getClass().getResource("ModifyProducts.fxml"));
+                Scene modifyProductScene = new Scene(modifyProductParent);
+                Stage modifyProductStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                modifyProductStage.setScene(modifyProductScene);
+                modifyProductStage.show();
+        } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("A part must be selected");
+                alert.showAndWait();
         }
 
     }
 
-    /**
-     *
-     * @param event
-     * @throws IOException
-     */
-    @FXML
-     void MainModifyPart(ActionEvent event) throws IOException{
-        modifiedPart = MainPartsTableView.getSelectionModel().getSelectedItem();
-        modifyPartsIndex = getAllParts().indexOf(modifiedPart);
-        Parent modifyPartParent = load(getClass().getResource("ModifyParts.fxml"));
-        Scene modifyPartScene = new Scene(modifyPartParent);
-        Stage modifyPartStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        modifyPartStage.setScene(modifyPartScene);
-        modifyPartStage.show();
-    }
-
-
+    //exit program
     @FXML
     private void MainExitClick(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -222,14 +210,14 @@ public class MainScreenController implements Initializable {
         }
     }
 
-
+    //delete product
     @FXML
-    private void MainDeleteProduct(ActionEvent event) throws IOException {
+    private void MainDeleteProduct(ActionEvent event) {
         Product product = MainProductsTableView.getSelectionModel().getSelectedItem();
         if(productValidateDelete(product)){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Deletion Error");
-            alert.setHeaderText("Product cannot be deleted!");
+            alert.setHeaderText("Product cannot be deleted");
             alert.setContentText("Product contains one or more parts.");
             alert.showAndWait();
         } else {
@@ -243,14 +231,18 @@ public class MainScreenController implements Initializable {
                 deleteProduct(product);
                 updateProductsTableView();
             }
-            System.out.println("Product " + product.getName() + " was removed.");
+            else{
+                Alert newAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                newAlert.initModality(Modality.NONE);
+                newAlert.setTitle("Select a product");
+                newAlert.setHeaderText("Please select a product");
+            }
         }
-
     }
 
+    //add product
     @FXML
     public AddProductController MainAddProduct(ActionEvent event) throws IOException {
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AddProducts.fxml"));
         Parent root = (Parent) loader.load();
         Scene scene = new Scene(root);
@@ -260,17 +252,9 @@ public class MainScreenController implements Initializable {
         return loader.getController();
     }
 
-    @FXML
-    private void MainModifyProduct(ActionEvent event) throws IOException {
-        modifiedProduct = MainProductsTableView.getSelectionModel().getSelectedItem();
-        modifyProductsIndex = getAllProducts().indexOf(modifiedProduct);
-        Parent modifyProductParent = load(getClass().getResource("ModifyProducts.fxml"));
-        Scene modifyProductScene = new Scene(modifyProductParent);
-        Stage modifyProductStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        modifyProductStage.setScene(modifyProductScene);
-        modifyProductStage.show();
-    }
 
+
+    //update parts/products
     public void updatePartsTableView() {
         MainPartsTableView.setItems(getAllParts());
     }
@@ -279,6 +263,7 @@ public class MainScreenController implements Initializable {
         MainProductsTableView.setItems(Inventory.getAllProducts());
     }
 
+    //search products
     @FXML
     void MainSearchProduct(ActionEvent event) {
         if (MainProductsSearchField.getText().isEmpty()) {
@@ -298,11 +283,6 @@ public class MainScreenController implements Initializable {
 
     }
 
-    /**
-     *
-     * @param url
-     * @param rb
-     */
     public void initialize(URL url, ResourceBundle rb) {
         partID_Col.setCellValueFactory(new PropertyValueFactory<>("id"));
         partName_Col.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -312,10 +292,9 @@ public class MainScreenController implements Initializable {
         productName_Col.setCellValueFactory(new PropertyValueFactory<>("name"));
         productInv_Col.setCellValueFactory(new PropertyValueFactory<>("stock"));
         productPrice_Col.setCellValueFactory(new PropertyValueFactory<>("price"));
-        MainPartsTableView.setItems(getAllParts());
+        MainPartsTableView.setItems(Inventory.getAllParts());
         MainProductsTableView.setItems(Inventory.getAllProducts());
 
     }
-
 
 }

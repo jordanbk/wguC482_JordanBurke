@@ -49,7 +49,7 @@
                <font>
                   <Font size="16.0" />
                </font></Label>
-            <TextField fx:id="AddPartsIDField" promptText="ID" GridPane.columnIndex="1" />
+            <TextField fx:id="AddPartsIDField" disable="true" text="Auto Gen - Disabled" GridPane.columnIndex="1" />
             <TextField fx:id="AddPartsNameField" promptText="Part Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="AddPartsInvField" promptText="Inv" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="AddPartsPriceField" promptText="Price/Cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />

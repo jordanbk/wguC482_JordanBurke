@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,195 +24,164 @@ import static Model.Inventory.getAllParts;
 
 public class AddProductController implements Initializable {
 
-    @FXML
-    private TextArea AddProductsMinField;
+    @FXML private TextArea AddProductsMinField;
+    @FXML private TextField AddProductsIDField;
+    @FXML private Button AddProduct_Save;
+    @FXML private TextField AddProductsInvField;
+    @FXML private TableColumn<Part, Integer> DeleteProductCurrentPartIDCol;
+    @FXML private TextField AddProductAddPartSearchField;
+    @FXML private TableColumn<Part, Integer> DeleteProductCurrentInvCol;
+    @FXML private TableView<Product> AddProductsAddTableView;
+    @FXML private TableColumn<Part, String> AddProductPartNameCol;
+    @FXML private TableColumn<Part, Double> AddProductPriceCol;
+    @FXML private TableColumn<Part, Integer> AddProductInvLevelCol;
+    @FXML private TextField AddProductsPriceField;
+    @FXML private TableColumn<Part, Double> DeleteProductCurrentPriceCol;
+    @FXML private TextField AddProductsNameField;
+    @FXML private TextArea AddProductsMaxField;
+    @FXML private TableColumn<Part, Integer> AddProductPartIDCol;
+    @FXML private TableColumn<Part, String> DeleteProductCurrentPartNameCol;
+    @FXML private TableView<Part> AssociatedPartsTable;
+    @FXML private TableView<Part> partsTable;
 
-    @FXML
-    private Button AddProduct_DeletePart;
+    private final ObservableList<Part> filteredParts = FXCollections.observableArrayList();
 
-    @FXML
-    private TextField AddProductsIDField;
+    private final ObservableList<Part> associatedParts = FXCollections.observableArrayList();
 
-    @FXML
-    private TextField AddProductsInvField;
+    private final ObservableList<Part> allParts = FXCollections.observableArrayList(getAllParts());
 
-    @FXML
-    private TableColumn<Part, Integer> DeleteProductCurrentPartIDCol;
 
-    @FXML
-    private TextField AddProductAddPartSearchField;
-
-    @FXML
-    private TableColumn<Part, Integer> DeleteProductCurrentInvCol;
-
-    @FXML
-    private TableView<Product> AddProductsAddTableView;
-
-    @FXML
-    private TableColumn<Part, String> AddProductPartNameCol;
-
-    @FXML
-    private Button AddProduct_AddPart;
-
-    @FXML
-    private TableView<Part> AssociatedPartsTable;
-
-    @FXML
-    private TableView<Part> partsTable;
-
-    @FXML
-    private TableColumn<Part, Double> AddProductPriceCol;
-
-    @FXML
-    private TableColumn<Part, Integer> AddProductInvLevelCol;
-
-    @FXML
-    private TextField AddProductsPriceField;
-
-    @FXML
-    private Button SearchPartsInAddProduct;
-
-    @FXML
-    private Button AddProduct_Cancel;
-
-    @FXML
-    private TableColumn<Part, Double> DeleteProductCurrentPriceCol;
-
-    @FXML
-    private Button AddProduct_Save;
-
-    @FXML
-    private TextField AddProductsNameField;
-
-    @FXML
-    private TextArea AddProductsMaxField;
-
-    @FXML
-    private TableView<Part> AllPartsTable;
-
-    @FXML
-    private TableView<Part> AddProductsDeleteTableView;
-
-    @FXML
-    private TableColumn<Part, Integer> AddProductPartIDCol;
-
-    @FXML
-    private TableColumn<Part, String> DeleteProductCurrentPartNameCol;
-
-    @FXML
-    private Button AddProduct_Delete;
-
-    @FXML
-    private TableView<Part> AddProduct_AssociatedPartsTable;
-
-    @FXML
-    private TableView<Part> AddProduct_SearchPartTable;
-
-    private ObservableList<Part> productParts = FXCollections.observableArrayList();
-
-    private int productID;
-
-    private static ObservableList<Part> filteredParts = FXCollections.observableArrayList();
-
-    public void addFilteredPart(Part searchedPart){
+    /**
+     * @param searchedPart add filtered parts
+     */
+    public void addFilteredPart(Part searchedPart) {
         filteredParts.add(searchedPart);
     }
 
-    public ObservableList<Part> getFilteredParts(){
+    /**
+     * @return filtered parts
+     */
+    public ObservableList<Part> getFilteredParts() {
         return filteredParts;
     }
 
     @FXML
-     void AddProducts_SearchPartBtn(ActionEvent event) throws IOException {
-        if (AddProductAddPartSearchField.getText().isEmpty()) {
-            partsTable.setItems(Inventory.getAllParts());
-        }
-        else {
+    void AddProducts_SearchPartBtn(ActionEvent event) {
+        if (AddProductAddPartSearchField.getText().isEmpty() || AddProductAddPartSearchField.getText().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a search value");
+            alert.showAndWait();
+            partsTable.setItems(getAllParts());
+        } else {
             filteredParts.clear();
             Inventory.filteredParts.clear();
-            try{
+            try {
                 addFilteredPart(Inventory.lookupPart(Integer.parseInt(AddProductAddPartSearchField.getText())));
                 partsTable.setItems(getFilteredParts());
-            }
-
-            catch (Exception e){
+            } catch (Exception e) {
                 Inventory.lookupPart(AddProductAddPartSearchField.getText());
-
                 partsTable.setItems(Inventory.getFilteredPart());
             }
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Part not found");
+            alert.showAndWait();
         }
-
-      }
+    }
 
     @FXML
     void AddProduct_AddPartBtn(ActionEvent event) {
-        Part part = AllPartsTable.getSelectionModel().getSelectedItem();
-        productParts.add(part);
-
+        Part addPart = partsTable.getSelectionModel().getSelectedItem();
+        associatedParts.add(addPart);
+        updateAssociatedPartsTable();
     }
- 
-    @FXML
-    void AddProduct_DeletePartEvent(ActionEvent event) {
-        Part part = partsTable.getSelectionModel().getSelectedItem();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initModality(Modality.NONE);
-        alert.setTitle("Delete a Part");
-        alert.setHeaderText("Please Confirm");
-        alert.setContentText("Are you sure you want to delete " + part.getName() + " from part list?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            System.out.println("Part has been deleted.");
-            productParts.remove(part);
+
+/*        if (addPart != null) {
+            associatedParts.add(addPart);
+//            allParts.remove(addPart);
+//            addPartSearchTable.setItems(allParts);
+            updateAssociatedPartsTable();
         }
-        else {
-            System.out.println("Part deletion cancelled.");
+        else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Select a part");
+            alert.setContentText("Please select a part");
+            alert.showAndWait();
         }
+    }*/
+/*        Part addPart = this.partsTable.getSelectionModel().getSelectedItem();
+        associatedParts.add(addPart);
+        allParts.remove(addPart);
+        partsTable.setItems(allParts);
+        updateAssociatedPartsTable();*/
+    private void updateAssociatedPartsTable() {
+        AssociatedPartsTable.setItems(associatedParts);
     }
-
-
-    @FXML
-    void AddProduct_DeleteBtn(ActionEvent event) {
-
+    private void updateAllPartsTable(){
+        partsTable.setItems(getAllParts());
     }
-
-    Product newProduct = new Product();
 
     @FXML
     void AddProduct_SaveBtn(ActionEvent event) throws IOException {
-        // id auto generator
-        int counter = 1;
-        int newId = 1;
-
-        for (Product product : Inventory.getAllProducts()) {
-            counter = product.getId();
-            counter++;
-        }
-        newId = counter;
-
-        newProduct.setId(newId);
-        newProduct.setName(AddProductsNameField.getText());
-        newProduct.setStock(Integer.parseInt(AddProductsInvField.getText()));
-        newProduct.setPrice(Double.parseDouble(AddProductsPriceField.getText()));
-        newProduct.setMax(Integer.parseInt(AddProductsMaxField.getText()));
-        newProduct.setMin(Integer.parseInt(AddProductsMinField.getText()));
+        String name = AddProductsNameField.getText();
+        String price = AddProductsPriceField.getText();
+        String inv = AddProductsInvField.getText();
+        String max = AddProductsMaxField.getText();
+        String min = AddProductsMinField.getText();
 
         try {
-            if (newProduct.getMin() <= newProduct.getMax()){
-                Inventory.addProduct(newProduct);
-                Stage stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                Object scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-                stage.setScene(new Scene((Parent) scene));
-                stage.show();
-            }
-            else
-                throw new Exception();
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.show();
-            alert.setTitle("Warning Dialog");
-            alert.setContentText("Min value cannot be greater than max value.");
-        }
+            int tempAssociatedParts = associatedParts.size();
+            Double renderPrice = Double.parseDouble(price);
+            Integer renderInv = Integer.parseInt(inv);
+            Integer renderMax = Integer.parseInt(max);
+            Integer renderMin = Integer.parseInt(min);
 
+            String isValid = Product.productValidation(name, renderPrice, renderInv, renderMax, renderMin, tempAssociatedParts);
+            if (isValid == null) {
+                Product tempProduct = new Product();
+                int productId = Product.getIdCount();
+                tempProduct.setId(productId);
+                tempProduct.setName(name);
+                tempProduct.setPrice(renderPrice);
+                tempProduct.setStock(renderInv);
+                tempProduct.setMax(renderMax);
+                tempProduct.setMin(renderMin);
+                tempProduct.setAssociatedParts(associatedParts);
+                Inventory.addProduct(tempProduct);
+
+                Stage stage = (Stage) AddProduct_Save.getScene().getWindow();
+                Parent saved = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                Scene scene = new Scene(saved);
+                stage.setScene(scene);
+                stage.show();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("Product cannot be added");
+                alert.setContentText(isValid);
+                alert.showAndWait();
+            }
+        }
+        catch(NumberFormatException ex)
+        {
+            Alert Error = new Alert(Alert.AlertType.INFORMATION);
+            Error.setTitle("Error");
+            Error.setContentText("Some fields are blank");
+            Error.showAndWait();
+        }
+    }
+
+    @FXML
+    void AddProduct_DeletePartEvent(ActionEvent event) {
+        Part deletePart = partsTable.getSelectionModel().getSelectedItem();
+        if(deletePart != null){
+            associatedParts.remove(deletePart);
+            AssociatedPartsTable.setItems(associatedParts);
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setContentText("Please select a part");
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -221,15 +189,15 @@ public class AddProductController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "This will remove all text field values, do you want to continue?");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
 
-            Stage stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             Object scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
             stage.setScene(new Scene((Parent) scene));
             stage.show();
         }
-
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -237,18 +205,18 @@ public class AddProductController implements Initializable {
         AddProductPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         AddProductInvLevelCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         AddProductPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        partsTable.setItems(allParts);
         DeleteProductCurrentPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         DeleteProductCurrentPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         DeleteProductCurrentInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         DeleteProductCurrentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        partsTable.setItems(getAllParts());
-        AssociatedPartsTable.setItems(getAllParts());
-        AddProductsIDField.setText(String.valueOf(Inventory.getAllProducts().size() + 1));
-
-
-
+        AssociatedPartsTable.setItems(associatedParts);
+        updateAllPartsTable();
+        updateAssociatedPartsTable();
     }
 
-
-
 }
+
+
+
+

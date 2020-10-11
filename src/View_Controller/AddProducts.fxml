@@ -36,7 +36,7 @@
                   <Font size="16.0" />
                </font>
             </Label>
-            <TextField fx:id="AddProductsIDField" promptText="ID" GridPane.columnIndex="1" />
+            <TextField fx:id="AddProductsIDField" disable="true" text="Auto Gen - Disabled" GridPane.columnIndex="1" />
             <TextField fx:id="AddProductsNameField" promptText="Product Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="AddProductsInvField" promptText="Inv" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="AddProductsPriceField" promptText="Price/Cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -75,7 +75,7 @@
         </columns>
       </TableView>
       <Button fx:id="AddProduct_AddPart" layoutX="729.0" layoutY="290.0" mnemonicParsing="false" onAction="#AddProduct_AddPartBtn" prefHeight="29.0" prefWidth="64.0" text="Add" />
-      <Button fx:id="AddProduct_DeletePart" layoutX="729.0" layoutY="484.0" mnemonicParsing="false" onAction="#AddProduct_DeletePartEvent" prefHeight="29.0" prefWidth="64.0" text="Delete" />
+      <Button fx:id="AddProduct_DeletePart" layoutX="635.0" layoutY="484.0" mnemonicParsing="false" onAction="#AddProduct_DeletePartEvent" prefHeight="29.0" prefWidth="158.0" text="Remove Associated Part" />
       <Button fx:id="AddProduct_Cancel" layoutX="729.0" layoutY="525.0" mnemonicParsing="false" onAction="#AddProduct_CancelBtn" prefHeight="29.0" prefWidth="64.0" text="Cancel" />
       <Button fx:id="AddProduct_Save" layoutX="649.0" layoutY="525.0" mnemonicParsing="false" onAction="#AddProduct_SaveBtn" prefHeight="29.0" prefWidth="64.0" text="Save" />
       <TableView fx:id="AssociatedPartsTable" layoutX="387.0" layoutY="342.0" prefHeight="131.0" prefWidth="413.0">

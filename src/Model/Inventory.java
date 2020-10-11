@@ -8,7 +8,6 @@ public class Inventory {
     private static ObservableList <Part> allParts = FXCollections.observableArrayList();
     private static ObservableList <Product> allProducts = FXCollections.observableArrayList();
 
-    //*********METHODS***********
     /**
      *
      * @return all parts
@@ -48,9 +47,7 @@ public class Inventory {
      * @param selectedPart
      */
     public static void updatePart(int index, Part selectedPart) {
-        Part parts = Inventory.lookupPart(index);
-        Inventory.deletePart(parts);
-        Inventory.addPart(selectedPart);
+        allParts.set(index, selectedPart);
     }
 
     /**
@@ -88,8 +85,8 @@ public class Inventory {
      */
     public static boolean partValidateDelete(Part part) {
         boolean isFound = false;
-        for (int i = 0; i < allProducts.size(); i++) {
-            if (allProducts.get(i).getAssociatedParts().contains(part)) {
+        for (Product allProduct : allProducts) {
+            if (allProduct.getAssociatedParts().contains(part)) {
                 isFound = true;
             }
         }
@@ -100,29 +97,29 @@ public class Inventory {
      *
      * @param product
      * @return
+     * check if product has associated parts
      */
     public static boolean productValidateDelete(Product product) {
         boolean isFound = false;
         int productID = product.getId();
-        for (int i=0; i < allProducts.size(); i++) {
-            if (allProducts.get(i).getId() == productID) {
-                if (!allProducts.get(i).getAssociatedParts().isEmpty()) {
+        for (Product allProduct : allProducts) {
+            if (allProduct.getId() == productID) {
+                if (!allProduct.getAssociatedParts().isEmpty()) {
                     isFound = true;
                 }
             }
         }
         return isFound;
     }
-//for looking up parts
+    //looking up parts
     public static ObservableList<Part> filteredParts = FXCollections.observableArrayList();
-
     public static void newFilteredPart(Part part){
         filteredParts.add(part);
     }
-
     public static ObservableList<Part> getFilteredPart(){
         return filteredParts;
     }
+
     /**
      *
      * @param partID
@@ -136,6 +133,7 @@ public class Inventory {
        }
        return null;
     }
+
     /**
      *
      * @param partName
@@ -143,20 +141,28 @@ public class Inventory {
      */
     public static ObservableList<Part> lookupPart(String partName){
         for (Part part : allParts){
-            if (part.getName().equals(partName)){
+            if (partName.toLowerCase().equals(part.getName().toLowerCase())){
                 Inventory.newFilteredPart(part);
             }
         }
         return filteredParts;
     }
 
-    //for looking up products
+    //looking up products
     public static ObservableList<Product> filteredProducts = FXCollections.observableArrayList();
 
+    /**
+     *
+     * @param product add
+     */
     public static void newFilteredProduct(Product product){
         filteredProducts.add(product);
     }
 
+    /**
+     *
+     * @return filteredProducts
+     */
     public static ObservableList<Product> getFilteredProduct(){
         return filteredProducts;
     }
@@ -181,13 +187,13 @@ public class Inventory {
      * @return
      */
     public static ObservableList<Product> lookupProduct(String productName) {
-        ObservableList<Product> tempProdList = FXCollections.observableArrayList();
+        ObservableList<Product> tempList = FXCollections.observableArrayList();
         for (Product product : allProducts){
             if (productName.compareTo(product.getName()) == 0){
-                tempProdList.add(product);
+                tempList.add(product);
             }
         }
-        return tempProdList;
+        return tempList;
     }
 
 }
